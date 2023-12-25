@@ -1,0 +1,33 @@
+version: '3.8'
+
+volumes:
+  db_data:
+
+networks:
+  bwizard:
+
+services:
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: bwizard
+      MYSQL_DATABASE: bwizard
+      MYSQL_USER: bwizard
+      MYSQL_PASSWORD: bwizard
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - bwizard
+  wizard:
+    build:
+      context: .
+      # Correct the path to your Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - 8080:3000
+      - 8099:8099
+    # Important to bind/mount your codebase dir to /app dir for live reload
+    volumes:
+      - ./:/app
+    networks:
+      - bwizard
