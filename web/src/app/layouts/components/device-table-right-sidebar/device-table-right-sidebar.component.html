@@ -7,9 +7,9 @@
   <div class="d-flex justify-content-center bd-highlight mt-3">
     <div class="bd-highlight" style="width: 20px">
       <h4>
-         <i class="fas fa-server"  style="margin-left: 1px" *ngIf="device.icon === DeviceIcon.SERVER"></i>
-         <i class="fas fa-laptop" *ngIf="device.icon === DeviceIcon.COMPUTER"></i>
-         <i class="fas fa-mobile-alt"  style="margin-left: 4px"  *ngIf="device.icon === DeviceIcon.MOBILE"></i>
+         <i class="fas fa-server"  style="margin-left: 1px" [hidden]="device.icon !== DeviceIcon.SERVER"></i>
+         <i class="fas fa-laptop" [hidden]="device.icon !== DeviceIcon.COMPUTER"></i>
+         <i class="fas fa-mobile-alt"  style="margin-left: 4px"  [hidden]="device.icon !== DeviceIcon.MOBILE"></i>
       </h4>
     </div>
     <div class="pl-1 bd-highlight">
@@ -21,12 +21,12 @@
 
   <div class="d-flex justify-content-center bd-highlight mb-3">
     <div class="p-2 bd-highlight">
-      <button class="btn btn-primary" style="padding: 7px 15px">
+      <button class="btn btn-outline-warning" style="padding: 7px 15px">
         <span style="font-size: 16px"><i class="fas fa-download"></i> Backup</span>
       </button>
     </div>
     <div class="p-2 bd-highlight">
-      <button class="btn btn-primary" style="padding: 7px 15px">
+      <button class="btn btn-outline-warning" style="padding: 7px 15px">
         <span style="font-size: 16px"><i class="fas fa-upload"></i> Restore</span>
       </button>
     </div>
@@ -122,7 +122,7 @@
 
 
   <div class="text-center">
-    <button class="btn btn-primary btn-lg">
+    <button class="btn btn-outline-primary btn-lg">
       <i class="fas fa-history" ngbTooltip="Backup history" style="margin-right: 4px"></i> Backup jobs
     </button>
   </div>
