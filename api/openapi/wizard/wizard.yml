@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Backup Wizard API
+  description: An API to communicate with the backup wizard daemon
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /devices:
+    get:
+      description: Returns a list of devices
+      responses:
+        '200':
+          description: Successfully returned a list of devices
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - data
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Device"
+    post:
+      description: Registers a new device
+      responses:
+        '200':
+          description: Successfully registered a new device and returned it
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - data
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Device"
+  /devices/{id}:
+    get:
+      description: Returns the device matching the given id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully returned the device matching the given id
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - data
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Device"
+
+components:
+  schemas:
+    ProtectionStatus:
+      type: string
+      enum:
+        - ok
+        - warning
+        - error
+    DeviceKind:
+      type: string
+      enum:
+        - server
+        - computer
+        - mobile
+    OperatingSystem:
+      type: object
+      required:
+        - name
+        - cpu
+        - ram
+        - totalHardDrive
+      properties:
+        name:
+          type: string
+        cpu:
+          type: string
+        ram:
+          type: string
+        totalHardDrive:
+          type: string
+    Device:
+      type: object
+      required:
+        - id
+        - name
+        - kind
+        - protection
+        - ips
+        - agent
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        kind:
+          $ref: "#/components/schemas/DeviceKind"
+        protection:
+          $ref: "#/components/schemas/ProtectionStatus"
+        lastBackup:
+          type: string
+          format: date-time
+        ips:
+          type: array
+          items:
+            type: string
+        agent:
+          type: string
