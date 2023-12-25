@@ -25,5 +25,5 @@ func StartAPIServer() {
 
 	api.RegisterHandlers(e, handler)
 
-	e.Logger.Fatal(e.Start(net.JoinHostPort("127.0.0.1", *port)))
+	e.Logger.Fatal(e.Start(net.JoinHostPort("0.0.0.0", *port)))
 }
