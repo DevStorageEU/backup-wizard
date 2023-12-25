@@ -1,0 +1,130 @@
+
+<div class="mb-3"></div>
+
+
+<ng-container *ngIf="device">
+
+  <div class="d-flex justify-content-center bd-highlight mt-3">
+    <div class="bd-highlight" style="width: 20px">
+      <h4>
+         <i class="fas fa-server"  style="margin-left: 1px" *ngIf="device.icon === DeviceIcon.SERVER"></i>
+         <i class="fas fa-laptop" *ngIf="device.icon === DeviceIcon.COMPUTER"></i>
+         <i class="fas fa-mobile-alt"  style="margin-left: 4px"  *ngIf="device.icon === DeviceIcon.MOBILE"></i>
+      </h4>
+    </div>
+    <div class="pl-1 bd-highlight">
+      <span>{{ device.name }}</span>
+    </div>
+  </div>
+  <div class="bborder mb-2"></div>
+
+
+  <div class="d-flex justify-content-center bd-highlight mb-3">
+    <div class="p-2 bd-highlight">
+      <button class="btn btn-primary" style="padding: 7px 15px">
+        <span style="font-size: 16px"><i class="fas fa-download"></i> Backup</span>
+      </button>
+    </div>
+    <div class="p-2 bd-highlight">
+      <button class="btn btn-primary" style="padding: 7px 15px">
+        <span style="font-size: 16px"><i class="fas fa-upload"></i> Restore</span>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="bborder mb-1"></div>
+
+  <div class="d-flex bd-highlight">
+    <div class="p-2 flex-shrink-1 bd-highlight">
+      <h3><i class="fas fa-globe"></i></h3>
+    </div>
+    <div class="w-100 bd-highlight" style="padding-left: 8px">
+      <small class="subtitle">IP address:</small>
+      <br>
+      <span *ngFor="let ip of device.ip_addresses">{{ip}}<br></span>
+
+    </div>
+
+  </div>
+  <div class="bborder mb-2"></div>
+
+  <div class="d-flex bd-highlight">
+    <div class="p-2 flex-shrink-1 bd-highlight">
+      <h3><i class="fas fa-hdd"></i></h3>
+    </div>
+    <div class="w-100 bd-highlight" style="padding-left: 8px">
+      <small class="subtitle">Total size of backups:</small>
+      <br>
+      <span>291 GB</span> <!-- TODO: calculate real size -->
+
+    </div>
+
+  </div>
+  <div class="bborder mb-2"></div>
+
+  <div class="d-flex bd-highlight">
+    <div class="p-2 flex-shrink-1 bd-highlight">
+      <h3><i class="fas fa-terminal"></i></h3>
+    </div>
+    <div class="w-100 bd-highlight" style="padding-left: 8px">
+      <small class="subtitle">Agent version:</small>
+      <br>
+      <span>{{device.agent}}</span>
+
+    </div>
+
+  </div>
+  <div class="bborder mb-2"></div>
+
+
+  <div class="d-flex bd-highlight">
+    <div class="p-2 flex-shrink-1 bd-highlight">
+      <h3><i class="fas fa-microchip"></i></h3>
+    </div>
+    <div class="w-100 bd-highlight" style="padding-left: 8px">
+      <div class="row">
+        <div class="col-5"><small class="subtitle">Operating System:</small></div>
+        <div class="col"><span>{{device.os.osName}}</span></div>
+      </div>
+      <div class="row">
+        <div class="col-5"><small class="subtitle">Hard Disk size:</small></div>
+        <div class="col"><span>{{device.os.totalHarddrive}}</span></div>
+      </div>
+      <div class="row">
+        <div class="col-5"><small class="subtitle">CPU:</small></div>
+        <div class="col"><span>{{device.os.cpu}}</span></div>
+      </div>
+      <div class="row">
+        <div class="col-5"><small class="subtitle">RAM:</small></div>
+        <div class="col"><span>{{device.os.ram}}</span></div>
+      </div>
+
+    </div>
+
+  </div>
+  <div class="bborder mb-2 pt-2"></div>
+
+  <div class="d-flex bd-highlight">
+    <div class="p-2 flex-shrink-1 bd-highlight">
+      <h3><i class="fas fa-comment"></i></h3>
+    </div>
+    <div class="w-100 bd-highlight" style="padding-left: 8px">
+      <small class="subtitle">Comment:</small>
+      <br>
+      <span *ngIf="device.comment">{{device.comment}}</span>
+      <span *ngIf="!device.comment">-</span>
+
+    </div>
+
+  </div>
+  <div class="bborder mb-2"></div>
+
+
+  <div class="text-center">
+    <button class="btn btn-primary btn-lg">
+      <i class="fas fa-history" ngbTooltip="Backup history" style="margin-right: 4px"></i> Backup jobs
+    </button>
+  </div>
+
+</ng-container>

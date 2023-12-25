@@ -1,0 +1,43 @@
+<div class="row  h-100">
+  <div class="col rborder">
+
+
+    <div class="d-flex bd-highlight mt-3">
+      <div class="flex-grow-1 bd-highlight">
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i></li>
+            <li class="breadcrumb-item">Devices</li>
+            <li class="breadcrumb-item"><a href="#">Virtual Machines</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Frankfurt</li>
+          </ol>
+        </nav>
+
+      </div>
+      <div class="pl-2 bd-highlight">
+        <i class="fas fa-folder-plus"></i> New folder
+      </div>
+      <div class="pl-2 bd-highlight">
+        <i class="fas fa-folder-open"></i> Move to
+      </div>
+      <div class="pl-2 bd-highlight"><!-- placeholder --> </div>
+    </div>
+
+
+    <div class="bborder"></div>
+
+    <div class="mt-2"></div>
+
+
+    <app-device-table (deviceSelect)="this.selectedDevice = $event"></app-device-table>
+
+  </div>
+  <div class="col-3" *ngIf="selectedDevice">
+
+
+      <app-device-table-right-sidebar [device]="selectedDevice" class="animate__animated animate__fadeInRight"></app-device-table-right-sidebar>
+
+  </div>
+</div>
+

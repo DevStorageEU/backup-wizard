@@ -1,0 +1,24 @@
+.headerbar {
+  padding: 10px 0px;
+}
+.search-input {
+  border-radius: 5px;
+  background-color: #313436;
+  border-color: transparent;
+  color: rgba(213, 213, 213, 0.91);
+  height: 35px;
+  padding: 0px 10px;
+  width: 20rem;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+
+.icon {
+  padding: 5px;
+  height: 27px;
+  color: #a5a5a6;
+  cursor: pointer;
+}

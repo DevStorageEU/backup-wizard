@@ -1,0 +1,93 @@
+<!-- Filtering stuff -->
+<form>
+  <div class="input-group">
+    <input class="form-control" type="text" [formControl]="filter" placeholder="Search" />
+  </div>
+</form>
+<table ngb-table [dataSource]="dataSource" ngb-sort style="padding-right: 15px" class="deviceTable" >
+
+  <ng-container ngbColumnDef="selected">
+    <th *ngbHeaderCellDef ngb-header-cell style="width: 25px">
+
+      <input class="form-check-input" type="checkbox" value="" #toggleSelectCheckbox (click)="toggleSelectAll(toggleSelectCheckbox.checked)">
+    </th>
+    <td *ngbCellDef="let event" ngb-cell>
+      <input class="form-check-input" type="checkbox" [checked]="event.selected">
+    </td>
+  </ng-container>
+
+  <ng-container ngbColumnDef="name">
+    <th *ngbHeaderCellDef ngb-header-cell ngb-sort-header>Name</th>
+    <td *ngbCellDef="let event" ngb-cell >
+      <div class="d-flex flex-row bd-highlight">
+        <div class="bd-highlight" style="width: 20px">
+          <i class="fas fa-server"  style="margin-left: 1px" *ngIf="event.icon == DeviceIcon.SERVER"></i>
+          <i class="fas fa-laptop" *ngIf="event.icon == DeviceIcon.COMPUTER"></i>
+          <i class="fas fa-mobile-alt"  style="margin-left: 4px"  *ngIf="event.icon == DeviceIcon.MOBILE"></i>
+        </div>
+        <div class="pl-1 bd-highlight">{{ event.name }}</div>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container ngbColumnDef="protection">
+    <th *ngbHeaderCellDef ngb-header-cell ngb-sort-header style="max-width: 100rem">Protection</th>
+    <td *ngbCellDef="let event" ngb-cell >
+
+      <!-- Status: Okay -->
+      <div class="d-flex flex-row bd-highlight" *ngIf="event.protection == ProtectionStatus.OK">
+        <div class="bd-highlight" style="width: 10px">
+          <i class="far fa-check-circle" style="color: #97dc71"></i>
+        </div>
+        <div class="pl-1 bd-highlight">Ok</div>
+      </div>
+      <!-- Status: Warning -->
+      <div class="d-flex flex-row bd-highlight" *ngIf="event.protection == ProtectionStatus.WARNING">
+        <div class="bd-highlight" style="width: 10px">
+          <i class="fas fa-exclamation-triangle" style="color: #f6e052"></i>
+        </div>
+        <div class="pl-1 bd-highlight">Warning</div>
+      </div>
+      <!-- Status: Error -->
+      <div class="d-flex flex-row bd-highlight" *ngIf="event.protection == ProtectionStatus.ERROR">
+        <div class="bd-highlight" style="width: 10px">
+          <i class="far fa-check-circle" style="color: #da706a"></i>
+        </div>
+        <div class="pl-1 bd-highlight">Error</div>
+      </div>
+    </td>
+
+  </ng-container>
+
+  <ng-container ngbColumnDef="connection">
+    <th *ngbHeaderCellDef ngb-header-cell ngb-sort-header>Connection</th>
+    <td *ngbCellDef="let event" ngb-cell >
+      <div class="d-flex flex-row bd-highlight">
+        <div class="bd-highlight" style="width: 10px">
+          <i class="fas fa-circle" style="font-size: 9px; margin-bottom: 2.3px; color: #97dc71" *ngIf="event.connection == true"></i>
+          <i class="fas fa-circle" style="font-size: 9px; margin-bottom: 2.3px; color: #da706a" *ngIf="event.connection == false"></i>
+        </div>
+        <div class="pl-1 bd-highlight">
+          <span *ngIf="event.connection == true">Online</span>
+          <span *ngIf="event.connection == false">Offline</span>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container ngbColumnDef="lastBackup">
+    <th *ngbHeaderCellDef ngb-header-cell ngb-sort-header>Last backup</th>
+    <td *ngbCellDef="let event" ngb-cell >{{ event.lastBackup }}</td>
+  </ng-container>
+
+  <ng-container ngbColumnDef="action">
+    <th *ngbHeaderCellDef ngb-header-cell></th>
+    <td *ngbCellDef="let event" ngb-cell >
+      <i class="fas fa-angle-double-right opendevice-icon"></i>
+    </td>
+  </ng-container>
+
+
+  <tr *ngbHeaderRowDef="columnsToDisplay" ngb-header-row></tr>
+  <tr *ngbRowDef="let event; columns: columnsToDisplay" ngb-row (click)="select(event)" class="deviceTableRow"></tr>
+</table>
