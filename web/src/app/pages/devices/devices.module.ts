@@ -21,6 +21,7 @@ const routes: Routes = [
       },
       {
         path: 'manage/:id',
+        pathMatch: "full",
         component: DevicesManageComponent
       }
 

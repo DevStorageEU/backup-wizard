@@ -122,10 +122,11 @@
 
 
   <div class="text-center">
-    <button class="btn btn-outline-primary btn-lg">
-      <i class="fas fa-history" ngbTooltip="Backup history" style="margin-right: 4px"></i> Backup jobs
+    <button class="btn btn-outline-primary btn-lg" routerLink="/devices/manage/{{device.id}}">
+      <i class="fas fa-gear" ngbTooltip="Manage Device" style="margin-right: 4px"></i> Manage device
     </button>
   </div>
+
 
   <!-- TODO: Delete btn (with question dialog 'delete device with backups or without' and a failsafe delete confirmation)  -->
 

@@ -1,0 +1,92 @@
+<div class="backup-accordion">
+  <div class="d-flex bd-highlight" style="cursor: pointer" (click)="this.expanded = !this.expanded">
+    <div class="p-2 flex-grow-1 bd-highlight">
+      <b >{{ name }}</b>
+
+      <i class="ml-1 fas fa-stop-circle" style="color: #c0c0c0" *ngIf="jobStatus == BackupJobStatus.DISABLED"></i>
+      <i class="ml-1 fas fa-spinner fa-spin"  style="color: #97dc71" *ngIf="jobStatus == BackupJobStatus.ACTIVE"></i>
+      <i class="ml-1 fas fa-exclamation-triangle" style="color: #f6e052" *ngIf="jobStatus == BackupJobStatus.WARNING"></i>
+      <i class="ml-1 fas fa-exclamation-circle" style="color: #da706a" *ngIf="jobStatus == BackupJobStatus.ERROR"></i>
+
+
+    </div>
+    <div class="p-2 bd-highlight">
+      <span  *ngIf="expanded"><i class="fas fa-angle-up"></i></span>
+      <span  *ngIf="!expanded"><i class="fas fa-angle-down"></i></span>
+    </div>
+  </div>
+  <div *ngIf="expanded" class="p-2">
+    <div class="d-flex bd-highlight">
+      <div class="flex-grow-1 bd-highlight">
+        <p>Status: {{ BackupJobStatus[jobStatus] }}</p>
+      </div>
+      <div class="pl-2 bd-highlight">
+        <button class="btn btn-sm btn-outline-secondary" routerLink="/jobs/x">Settings</button>
+      </div>
+    </div>
+
+
+    <!---------------------------------------------------------------------->
+
+      <ng-container *ngIf="jobStatus == BackupJobStatus.DISABLED">
+        <!-- Disabled Job -->
+        <div class="alert alert-warning" role="alert">
+          This backup plan is currently disabled. Edit the job to reactivate the backup.
+          <button class="btn btn-sm btn-success pl-2">Edit / Reactivate</button>
+        </div>
+
+      </ng-container>
+
+    <ng-container *ngIf="jobStatus == BackupJobStatus.IDLE">
+      <!-- Disabled Job -->
+      Next start: 01.01.1970 14:00
+      <br>
+      Last run: Successfully
+
+    </ng-container>
+      <ng-container *ngIf="jobStatus == BackupJobStatus.ACTIVE">
+        <!-- Running Job -->
+        <ngb-progressbar class="mb-2" type="success" [value]="49" height="10px"></ngb-progressbar>
+        <div class="d-flex bd-highlight">
+          <div class="flex-grow-1 bd-highlight">49%</div>
+          <div class="pl-2 bd-highlight">
+            <button class="btn btn-sm btn-outline-danger">Cancel</button>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <ng-container *ngIf="jobStatus == BackupJobStatus.WARNING">
+        <!-- Running Job -->
+        <div class="alert alert-warning" role="alert">
+          <b>Warning: </b> ABC1234ABC
+        </div>
+
+        <ngb-progressbar class="mb-2" type="warning" [value]="49" height="10px"></ngb-progressbar>
+        <div class="d-flex bd-highlight">
+          <div class="flex-grow-1 bd-highlight">49%</div>
+          <div class="pl-2 bd-highlight">
+            <button class="btn btn-sm btn-outline-danger">Cancel</button>
+          </div>
+        </div>
+
+      </ng-container>
+      <ng-container *ngIf="jobStatus == BackupJobStatus.ERROR">
+        <!-- Running Job -->
+        <div class="alert alert-danger" role="alert">
+          <b>Error: </b> ABC1234ABC
+        </div>
+
+        <ngb-progressbar class="mb-2" type="danger" [value]="49" height="10px"></ngb-progressbar>
+        <div class="d-flex bd-highlight">
+          <div class="flex-grow-1 bd-highlight">49%</div>
+          <div class="pl-2 bd-highlight">
+            <button class="btn btn-sm btn-outline-danger">Retry</button>
+          </div>
+        </div>
+
+      </ng-container>
+
+
+  </div>
+</div>

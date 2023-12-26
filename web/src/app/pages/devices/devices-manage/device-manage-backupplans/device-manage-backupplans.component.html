@@ -1,0 +1,10 @@
+<app-device-manage-backupplans-item name="Default backup plan"></app-device-manage-backupplans-item>
+<app-device-manage-backupplans-item [jobStatus]="BackupJobStatus.ACTIVE" [expanded]="true" name="Custom backup"></app-device-manage-backupplans-item>
+<app-device-manage-backupplans-item [jobStatus]="BackupJobStatus.ERROR"  name="My backup plan"></app-device-manage-backupplans-item>
+<app-device-manage-backupplans-item [jobStatus]="BackupJobStatus.DISABLED"  name="Weekly backup plan"></app-device-manage-backupplans-item>
+<app-device-manage-backupplans-item [jobStatus]="BackupJobStatus.WARNING"  name="Full backup"></app-device-manage-backupplans-item>
+
+<hr>
+<div class="text-end">
+  <div class="btn btn-outline-primary">New Backup plan</div>
+</div>
