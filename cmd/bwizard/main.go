@@ -43,5 +43,5 @@ func main() {
 
 	app := application.NewApplication(db)
 
-	wizardapi.StartAPIServer(app)
+	wizardapi.StartAPIServer(app, app.DeviceRepo)
 }

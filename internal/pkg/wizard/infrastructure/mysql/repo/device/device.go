@@ -54,6 +54,38 @@ func (i *Impl) GetDeviceByID(ctx context.Context, id uuid.UUID) (*device.Device,
 	}
 }
 
+// GetDevices returns all registered devices
+func (i *Impl) GetDevices(ctx context.Context) ([]*device.Device, error) {
+	query, _, err := goqu.
+		Dialect(Dialect).
+		From(TableName).
+		Select(&device.Device{}).
+		ToSQL()
+
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := i.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func(rows *sql.Rows) {
+		_ = rows.Close()
+	}(rows)
+
+	devices := make([]*device.Device, 0)
+	for rows.Next() {
+		deviceEntity := new(device.Device)
+		if scanErr := rows.Scan(deviceEntity); scanErr != nil {
+			return nil, scanErr
+		}
+	}
+
+	return devices, nil
+}
+
 // SaveDevice inserts or updates a device in the database
 func (i *Impl) SaveDevice(ctx context.Context, device *device.Device) error {
 	insertSQL, _, _ := goqu.

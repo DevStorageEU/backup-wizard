@@ -16,8 +16,8 @@ type Application interface {
 }
 
 type Impl struct {
-	deviceRepo          deviceRepo.Repository
-	deviceInspectionSvc deviceSvc.InspectionService
+	DeviceRepo          deviceRepo.Repository
+	DeviceInspectionSvc deviceSvc.InspectionService
 }
 
 var _ Application = &Impl{}
@@ -28,14 +28,14 @@ func NewApplication(db *sql.DB) *Impl {
 	deviceInspectionSvc := deviceSvcImpl.NewInspectionSvc()
 
 	return &Impl{
-		deviceRepo:          deviceRepository,
-		deviceInspectionSvc: deviceInspectionSvc,
+		DeviceRepo:          deviceRepository,
+		DeviceInspectionSvc: deviceInspectionSvc,
 	}
 }
 
 // SetupDevice setups a new device
 func (i *Impl) SetupDevice(ips []deviceValue.IPAddress, kind deviceValue.Kind, name *string) (*device.Device, error) {
-	inspection, err := i.deviceInspectionSvc.Inspect(ips)
+	inspection, err := i.DeviceInspectionSvc.Inspect(ips)
 	if err != nil {
 		return nil, err
 	}

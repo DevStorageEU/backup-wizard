@@ -21,3 +21,12 @@ func MapDevice(device *device.Device) wizard.Device {
 		LastBackup: device.LastBackup,
 	}
 }
+
+func MapDevices(devices []*device.Device) []wizard.Device {
+	mappedDevices := make([]wizard.Device, 0, len(devices))
+	for _, deviceEntity := range devices {
+		mappedDevices = append(mappedDevices, MapDevice(deviceEntity))
+	}
+
+	return mappedDevices
+}

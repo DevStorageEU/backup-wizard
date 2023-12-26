@@ -8,5 +8,6 @@ import (
 
 type Repository interface {
 	GetDeviceByID(ctx context.Context, id uuid.UUID) (*device.Device, error)
+	GetDevices(ctx context.Context) ([]*device.Device, error)
 	SaveDevice(ctx context.Context, device *device.Device) error
 }
