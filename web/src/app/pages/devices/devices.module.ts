@@ -6,6 +6,7 @@ import {RouterModule, Routes} from "@angular/router";
 import {DefaultLayoutComponent} from "../../layouts/default-layout/default-layout.component";
 import {FormsModule} from "@angular/forms";
 import {NgbTooltipModule} from "@ng-bootstrap/ng-bootstrap";
+import {DevicesManageComponent} from "./devices-manage/devices-manage.component";
 
 
 
@@ -17,6 +18,10 @@ const routes: Routes = [
       {
         path: 'delete',
         component: DevicesDeleteComponent
+      },
+      {
+        path: 'manage/:id',
+        component: DevicesManageComponent
       }
 
 ];

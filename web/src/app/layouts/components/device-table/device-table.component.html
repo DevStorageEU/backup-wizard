@@ -82,7 +82,7 @@
 
   <ng-container ngbColumnDef="action">
     <th *ngbHeaderCellDef ngb-header-cell></th>
-    <td *ngbCellDef="let event" ngb-cell >
+    <td *ngbCellDef="let event" ngb-cell routerLink="/devices/manage/{{event.id}}">
       <i class="fas fa-angle-double-right opendevice-icon"></i>
     </td>
   </ng-container>
