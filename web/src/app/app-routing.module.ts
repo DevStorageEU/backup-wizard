@@ -18,7 +18,7 @@ const routes: Routes = [
       },
       {
         path: 'devices',
-        loadChildren:()=> import('./pages/devices/devices.module').then(m=> m.DevicesModule)
+        loadChildren: () => DevicesModule
       },
       {
         path: 'dashboard',

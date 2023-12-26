@@ -14,6 +14,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {DfxPaginationModule, DfxSortModule, DfxTableModule} from "dfx-bootstrap-table";
 import { DeviceTableRightSidebarComponent } from './layouts/components/device-table-right-sidebar/device-table-right-sidebar.component';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {ToastrModule} from "ngx-toastr";
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     DfxPaginationModule,
     DfxSortModule,
     FormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
