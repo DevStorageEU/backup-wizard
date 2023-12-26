@@ -9,6 +9,7 @@ tasks:
     cmds:
       - go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest
       - go install github.com/pressly/goose/v3/cmd/goose@latest
+      - npm install @openapitools/openapi-generator-cli -g
   migrations-create:
     cmd: goose -dir ./migrations create {{.CLI_ARGS}} sql
   migrations-migrate:
@@ -16,3 +17,4 @@ tasks:
   gen-http:
     cmds:
       - oapi-codegen -package wizard -generate types,server,strict-server ./api/openapi/wizard/wizard.yml > ./api/openapi/wizard/wizard.gen.go
+      - openapi-generator-cli generate -i ./api/openapi/wizard/wizard.yml -g typescript-angular -o ./web/src/app/api
