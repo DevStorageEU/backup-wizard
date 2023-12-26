@@ -1,0 +1,46 @@
+<div class="center-screen">
+  <div class="card  w-50 text-start">
+    <div class="card-header">
+      <h3>Add new device</h3>
+    </div>
+    <div class="card-body ">
+
+      <small>Name of the device</small>
+      <input class="form-control" placeholder="e.g. 'webserver1'">
+      <div class="mt-3"></div>
+      <small>IP-Address(es) <i title="e.g. 127.0.0.2 or 2a0f:5707:b130::1" class="far fa-question-circle"></i></small>
+
+      <input class="form-control mt-1" *ngFor="let ipAddress of ipAddresses" #ipAddressInputField (keyup)="validateIP(ipAddressInputField)">
+
+      <div class="text-end">
+        <button class="btn btn-link" style="padding: 0px;" (click)="addIpAddressField()" ngbTooltip="Fallback addresses">Add another address</button>
+      </div>
+
+
+      <small>Device type</small>
+      <select class="form-select">
+        <option value="server" selected>Server</option>
+        <option value="computer">Desktop Computer</option>
+        <option value="mobile">Mobile</option>
+      </select>
+      <br>
+
+
+      <small>SSH-Key </small>
+
+      <textarea readonly rows="6" class="form-control w-100" >ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDO8JELCwmZ7Z3nAbfkLE3M5BK0C5C6tVlJaLMqwWJUQF0Lwntd2sNu1ijx5cyrhLSOR5tXo4YchTHeSzAEo4fD8aHG9UfB4lRVLfeepcTMhAlgpO1+OdVl82bVTKAW98wuYI4+qoNLaGox50o+R8kpd0IIsTdFvD/RbDr319gpwqmxLZ8NELrcY7E2so5ArVcrL6ZF4iiCDoiyvKi3e4nQxwpG9OSszmunfXSFap93jX8BdjROguLPeGHJdottEThbZ01b6a0IRy3CHgu5FcST9G+mSDymEo3Z60OTFcYwjaVQFncKhintWADc82TBLGBGkLLaZoWcbV0hAhZKoKGv backupserver</textarea>
+      <small>Append to <code>/root/.ssh/authorized_keys</code> or via <a href="javascript:none()" (click)="copySSHKeyCommandToClipboard()">command</a>. </small>
+      <br>
+
+    </div>
+    <div class="card-footer">
+      <div class="text-end">
+        <button class="btn btn-success" (click)="submit()" [disabled]="isLoading" >
+          <i class="fas fa-spin fa-spinner" *ngIf="isLoading"></i>
+          Add device
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
