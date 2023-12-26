@@ -1,8 +1,8 @@
-package repo
+package device
 
 import (
-	"bwizard/internal/pkg/wizard/domain/entity"
-	"bwizard/internal/pkg/wizard/domain/repo"
+	"bwizard/internal/pkg/wizard/domain/entity/device"
+	device2 "bwizard/internal/pkg/wizard/domain/repo/device"
 	"context"
 	"database/sql"
 	"errors"
@@ -11,54 +11,54 @@ import (
 )
 
 const (
-	DeviceDialect   = "mysql"
-	DeviceTableName = "devices"
+	Dialect   = "mysql"
+	TableName = "devices"
 )
 
-type DeviceRepoImpl struct {
+type Impl struct {
 	db *sql.DB
 }
 
-var _ repo.DeviceRepository = &DeviceRepoImpl{}
+var _ device2.Repository = &Impl{}
 
-// NewDeviceRepository returns a new mysql device repository
-func NewDeviceRepository(db *sql.DB) *DeviceRepoImpl {
-	return &DeviceRepoImpl{
+// NewRepository returns a new mysql device repository
+func NewRepository(db *sql.DB) *Impl {
+	return &Impl{
 		db: db,
 	}
 }
 
 // GetDeviceByID returns the device matching the given id from the database or nil
 // if the device doesn't exist
-func (i *DeviceRepoImpl) GetDeviceByID(ctx context.Context, id uuid.UUID) (*entity.Device, error) {
+func (i *Impl) GetDeviceByID(ctx context.Context, id uuid.UUID) (*device.Device, error) {
 	query, _, err := goqu.
-		Dialect(DeviceDialect).
-		From(DeviceTableName).
-		Select(&entity.Device{}).
+		Dialect(Dialect).
+		From(TableName).
+		Select(&device.Device{}).
 		ToSQL()
 
 	if err != nil {
 		return nil, err
 	}
 
-	var device entity.Device
+	var deviceEntity device.Device
 	row := i.db.QueryRowContext(ctx, query)
 
-	switch rowErr := row.Scan(&device); {
+	switch rowErr := row.Scan(&deviceEntity); {
 	case errors.Is(rowErr, sql.ErrNoRows):
 		return nil, nil
 	case rowErr == nil:
-		return &device, nil
+		return &deviceEntity, nil
 	default:
 		return nil, rowErr
 	}
 }
 
 // SaveDevice inserts or updates a device in the database
-func (i *DeviceRepoImpl) SaveDevice(ctx context.Context, device *entity.Device) error {
+func (i *Impl) SaveDevice(ctx context.Context, device *device.Device) error {
 	insertSQL, _, _ := goqu.
-		Dialect(DeviceDialect).
-		Insert(DeviceTableName).
+		Dialect(Dialect).
+		Insert(TableName).
 		Rows(device).
 		OnConflict(goqu.DoUpdate("key", goqu.Record{"updated_at": goqu.L("NOW()")})).
 		ToSQL()
