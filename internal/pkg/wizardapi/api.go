@@ -2,6 +2,7 @@ package wizardapi
 
 import (
 	api "bwizard/api/openapi/wizard"
+	"bwizard/internal/pkg/wizard/application"
 	"flag"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
@@ -12,11 +13,11 @@ const (
 	DefaultPort = "8099"
 )
 
-func StartAPIServer() {
+func StartAPIServer(app application.Application) {
 	port := flag.String("port", DefaultPort, "Default port to start the api and ui on")
 	flag.Parse()
 
-	handler := NewHandler()
+	handler := NewHandler(app)
 
 	e := echo.New()
 	e.Use(echoMiddleware.Logger())

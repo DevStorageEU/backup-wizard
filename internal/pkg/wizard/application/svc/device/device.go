@@ -12,6 +12,10 @@ type InspectionSvcImpl struct {
 
 var _ deviceSvc.InspectionService = &InspectionSvcImpl{}
 
+func NewInspectionSvc() *InspectionSvcImpl {
+	return &InspectionSvcImpl{}
+}
+
 // Inspect gains information from a backup device such like the operating system or the agent
 func (i *InspectionSvcImpl) Inspect(ips []deviceValue.IPAddress) (*deviceValue.Inspection, error) {
 	credentials := ssh.Credentials{

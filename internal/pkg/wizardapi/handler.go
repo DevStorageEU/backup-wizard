@@ -2,16 +2,21 @@ package wizardapi
 
 import (
 	"bwizard/api/openapi/wizard"
+	"bwizard/internal/pkg/wizard/application"
 	"github.com/labstack/echo/v4"
 	openapiTypes "github.com/oapi-codegen/runtime/types"
 )
 
-type Handler struct{}
+type Handler struct {
+	app application.Application
+}
 
 var _ wizard.ServerInterface = &Handler{}
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(app application.Application) *Handler {
+	return &Handler{
+		app: app,
+	}
 }
 
 func (h *Handler) GetDevices(ctx echo.Context) error {

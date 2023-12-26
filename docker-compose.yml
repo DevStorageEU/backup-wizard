@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 volumes:
   db_data:
@@ -10,19 +10,33 @@ services:
   db:
     image: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: bwizard
-      MYSQL_DATABASE: bwizard
-      MYSQL_USER: bwizard
-      MYSQL_PASSWORD: bwizard
+      MARIADB_ROOT_PASSWORD: bwizard
+      MARIADB_DATABASE: bwizard
+      MARIADB_USER: bwizard
+      MARIADB_PASSWORD: bwizard
+    healthcheck:
+      test: [ "CMD", "mariadb-admin" ,"ping", "-u", "root", "-pbwizard", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    ports:
+      - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - bwizard
   wizard:
+    depends_on:
+      db:
+        condition: service_healthy
     build:
       context: .
       # Correct the path to your Dockerfile
       dockerfile: Dockerfile
+    environment:
+      DB_USER: bwizard
+      DB_PASS: bwizard
+      DB_HOST: db
+      DB_DATABASE: bwizard
     ports:
       - 8080:3000
       - 8099:8099
