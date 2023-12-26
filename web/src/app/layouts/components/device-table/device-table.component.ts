@@ -33,7 +33,6 @@ export class DeviceTableComponent implements AfterViewInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
 
-    this.select(this.devices[0]) //TODO: remove me (just for debugging)
   }
 
   toggleSelectAll(enabled: boolean) {

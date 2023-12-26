@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {Device} from "../../../services/device.service";
+import {Device, ProtectionStatus} from "../../../services/device.service";
 import {dummyDevices} from "../../../../../test/data/devices";
 import {ActivatedRoute, Router} from "@angular/router";
 import {
@@ -10,6 +10,8 @@ import {
   NgbAccordionItem
 } from "@ng-bootstrap/ng-bootstrap";
 import {DeviceManageBackupplansComponent} from "./device-manage-backupplans/device-manage-backupplans.component";
+import {NgForOf, NgIf} from "@angular/common";
+import {DeviceManageDevicestatusComponent} from "./device-manage-devicestatus/device-manage-devicestatus.component";
 
 @Component({
   selector: 'app-devices-manage',
@@ -22,6 +24,9 @@ import {DeviceManageBackupplansComponent} from "./device-manage-backupplans/devi
     NgbAccordionCollapse,
     NgbAccordionBody,
     DeviceManageBackupplansComponent,
+    NgForOf,
+    NgIf,
+    DeviceManageDevicestatusComponent,
   ],
   templateUrl: './devices-manage.component.html',
   styleUrl: './devices-manage.component.scss'
@@ -35,4 +40,5 @@ export class DevicesManageComponent {
 
   }
 
+  protected readonly ProtectionStatus = ProtectionStatus;
 }

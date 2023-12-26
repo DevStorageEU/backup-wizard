@@ -1,25 +1,22 @@
 <div class="row mt-3">
   <div class="col-6">
     <div class="card">
+      <div class="card-header">
+         <h3>{{device.name}}</h3>
+      </div>
       <div class="card-body">
-          {{device.name}}
+        <app-device-manage-devicestatus [device]="device"></app-device-manage-devicestatus>
       </div>
     </div>
   </div>
   <div class="col-6">
-
-
     <div class="card">
       <div class="card-header">
         <h3>Backup plans</h3>
       </div>
       <div class="card-body">
-
         <app-device-manage-backupplans></app-device-manage-backupplans>
-
-
       </div>
     </div>
-
   </div>
 </div>

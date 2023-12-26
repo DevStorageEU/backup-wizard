@@ -1,0 +1,79 @@
+<ng-container *ngIf="device">
+  <table class="table">
+    <tbody>
+    <tr>
+      <th scope="row">Device name</th>
+      <td colspan="2" class="table-active">{{ device.name }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Operating system</th>
+      <td colspan="2" class="table-active">{{ device.os.osName }}</td>
+    </tr>
+    <tr>
+      <th scope="row">RAM</th>
+      <td colspan="2" class="table-active">{{ device.os.ram }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Processor</th>
+      <td colspan="2" class="table-active">{{ device.os.cpu }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Total Harddisk</th>
+      <td colspan="2" class="table-active">{{ device.os.totalHarddrive }}</td>
+    </tr>
+    <tr>
+      <th scope="row">SSH Agent</th>
+      <td colspan="2" class="table-active">{{ device.agent }}</td>
+    </tr>
+    <tr>
+      <th scope="row">IP-Addresses</th>
+      <td colspan="2" class="table-active pb-0">
+        <ul>
+          <li *ngFor="let address of device.ip_addresses">{{address}}</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Protection status</th>
+      <td colspan="2" class="table-active">
+        <div class="d-flex flex-row bd-highlight" *ngIf="device.protection == ProtectionStatus.OK">
+          <div class="bd-highlight" style="width: 10px">
+            <i class="far fa-check-circle" style="color: #97dc71"></i>
+          </div>
+          <div class="pl-1 bd-highlight">Ok</div>
+        </div>
+        <!-- Status: Warning -->
+        <div class="d-flex flex-row bd-highlight" *ngIf="device.protection == ProtectionStatus.WARNING">
+          <div class="bd-highlight" style="width: 10px">
+            <i class="fas fa-exclamation-triangle" style="color: #f6e052"></i>
+          </div>
+          <div class="pl-1 bd-highlight">Warning</div>
+        </div>
+        <!-- Status: Error -->
+        <div class="d-flex flex-row bd-highlight" *ngIf="device.protection == ProtectionStatus.ERROR">
+          <div class="bd-highlight" style="width: 10px">
+            <i class="far fa-check-circle" style="color: #da706a"></i>
+          </div>
+          <div class="pl-1 bd-highlight">Error</div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Connection status</th>
+      <td colspan="2" class="table-active">
+        <span *ngIf="device.connection == true">Online</span>
+        <span *ngIf="device.connection == false">Offline</span>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Comment</th>
+      <td colspan="2" class="table-active">
+        <textarea class="form-control w-100" rows="3">{{device.comment}}</textarea>
+        <div class="text-end">
+          <button class="btn btn-sm btn-outline-success" style="padding: 0px 10px">Save</button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</ng-container>
