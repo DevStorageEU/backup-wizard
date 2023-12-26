@@ -15,4 +15,4 @@ tasks:
     cmd: goose -dir ./migrations up
   gen-http:
     cmds:
-      - oapi-codegen -package wizard -generate types,server ./api/openapi/wizard/wizard.yml > ./api/openapi/wizard/wizard.gen.go
+      - oapi-codegen -package wizard -generate types,server,strict-server ./api/openapi/wizard/wizard.yml > ./api/openapi/wizard/wizard.gen.go

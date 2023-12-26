@@ -3,15 +3,16 @@ package wizardapi
 import (
 	"bwizard/api/openapi/wizard"
 	"bwizard/internal/pkg/wizard/application"
-	"github.com/labstack/echo/v4"
-	openapiTypes "github.com/oapi-codegen/runtime/types"
+	deviceValue "bwizard/internal/pkg/wizard/domain/valueobject/device"
+	"bwizard/internal/pkg/wizardapi/mappings"
+	"context"
 )
 
 type Handler struct {
 	app application.Application
 }
 
-var _ wizard.ServerInterface = &Handler{}
+var _ wizard.StrictServerInterface = &Handler{}
 
 func NewHandler(app application.Application) *Handler {
 	return &Handler{
@@ -19,17 +20,32 @@ func NewHandler(app application.Application) *Handler {
 	}
 }
 
-func (h *Handler) GetDevices(ctx echo.Context) error {
+func (h *Handler) FindDevices(ctx context.Context, request wizard.FindDevicesRequestObject) (wizard.FindDevicesResponseObject, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (h *Handler) PostDevices(ctx echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+func (h *Handler) RegisterDevice(ctx context.Context, request wizard.RegisterDeviceRequestObject) (wizard.RegisterDeviceResponseObject, error) {
+	ips := make([]deviceValue.IPAddress, 0)
+	for _, ip := range ips {
+		ips = append(ips, ip)
+	}
+
+	device, err := h.app.SetupDevice(ips, deviceValue.Kind(request.Body.Kind), request.Body.Name)
+	if err != nil {
+		// TODO: Add error handling here
+		return nil, err
+	}
+
+	mappedDevice := mappings.MapDevice(device)
+
+	return wizard.RegisterDevice200JSONResponse{
+		Success: true,
+		Data:    mappedDevice,
+	}, nil
 }
 
-func (h *Handler) GetDevicesId(ctx echo.Context, id openapiTypes.UUID) error {
+func (h *Handler) GetDevicesId(ctx context.Context, request wizard.GetDevicesIdRequestObject) (wizard.GetDevicesIdResponseObject, error) {
 	//TODO implement me
 	panic("implement me")
 }

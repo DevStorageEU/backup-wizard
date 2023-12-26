@@ -4,12 +4,15 @@
 package wizard
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
+	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
@@ -44,14 +47,24 @@ type DeviceKind string
 // ProtectionStatus defines model for ProtectionStatus.
 type ProtectionStatus string
 
+// RegisterDeviceRequest defines model for RegisterDeviceRequest.
+type RegisterDeviceRequest struct {
+	Ips  []string   `json:"ips"`
+	Kind DeviceKind `json:"kind"`
+	Name *string    `json:"name,omitempty"`
+}
+
+// RegisterDeviceJSONRequestBody defines body for RegisterDevice for application/json ContentType.
+type RegisterDeviceJSONRequestBody = RegisterDeviceRequest
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
 	// (GET /devices)
-	GetDevices(ctx echo.Context) error
+	FindDevices(ctx echo.Context) error
 
 	// (POST /devices)
-	PostDevices(ctx echo.Context) error
+	RegisterDevice(ctx echo.Context) error
 
 	// (GET /devices/{id})
 	GetDevicesId(ctx echo.Context, id openapi_types.UUID) error
@@ -62,21 +75,21 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
-// GetDevices converts echo context to params.
-func (w *ServerInterfaceWrapper) GetDevices(ctx echo.Context) error {
+// FindDevices converts echo context to params.
+func (w *ServerInterfaceWrapper) FindDevices(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetDevices(ctx)
+	err = w.Handler.FindDevices(ctx)
 	return err
 }
 
-// PostDevices converts echo context to params.
-func (w *ServerInterfaceWrapper) PostDevices(ctx echo.Context) error {
+// RegisterDevice converts echo context to params.
+func (w *ServerInterfaceWrapper) RegisterDevice(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PostDevices(ctx)
+	err = w.Handler.RegisterDevice(ctx)
 	return err
 }
 
@@ -124,8 +137,169 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/devices", wrapper.GetDevices)
-	router.POST(baseURL+"/devices", wrapper.PostDevices)
+	router.GET(baseURL+"/devices", wrapper.FindDevices)
+	router.POST(baseURL+"/devices", wrapper.RegisterDevice)
 	router.GET(baseURL+"/devices/:id", wrapper.GetDevicesId)
 
+}
+
+type FindDevicesRequestObject struct {
+}
+
+type FindDevicesResponseObject interface {
+	VisitFindDevicesResponse(w http.ResponseWriter) error
+}
+
+type FindDevices200JSONResponse struct {
+	Data    []Device `json:"data"`
+	Success bool     `json:"success"`
+}
+
+func (response FindDevices200JSONResponse) VisitFindDevicesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RegisterDeviceRequestObject struct {
+	Body *RegisterDeviceJSONRequestBody
+}
+
+type RegisterDeviceResponseObject interface {
+	VisitRegisterDeviceResponse(w http.ResponseWriter) error
+}
+
+type RegisterDevice200JSONResponse struct {
+	Data    Device `json:"data"`
+	Success bool   `json:"success"`
+}
+
+func (response RegisterDevice200JSONResponse) VisitRegisterDeviceResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDevicesIdRequestObject struct {
+	Id openapi_types.UUID `json:"id"`
+}
+
+type GetDevicesIdResponseObject interface {
+	VisitGetDevicesIdResponse(w http.ResponseWriter) error
+}
+
+type GetDevicesId200JSONResponse struct {
+	Data    Device `json:"data"`
+	Success bool   `json:"success"`
+}
+
+func (response GetDevicesId200JSONResponse) VisitGetDevicesIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+// StrictServerInterface represents all server handlers.
+type StrictServerInterface interface {
+
+	// (GET /devices)
+	FindDevices(ctx context.Context, request FindDevicesRequestObject) (FindDevicesResponseObject, error)
+
+	// (POST /devices)
+	RegisterDevice(ctx context.Context, request RegisterDeviceRequestObject) (RegisterDeviceResponseObject, error)
+
+	// (GET /devices/{id})
+	GetDevicesId(ctx context.Context, request GetDevicesIdRequestObject) (GetDevicesIdResponseObject, error)
+}
+
+type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
+type StrictMiddlewareFunc = strictecho.StrictEchoMiddlewareFunc
+
+func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareFunc) ServerInterface {
+	return &strictHandler{ssi: ssi, middlewares: middlewares}
+}
+
+type strictHandler struct {
+	ssi         StrictServerInterface
+	middlewares []StrictMiddlewareFunc
+}
+
+// FindDevices operation middleware
+func (sh *strictHandler) FindDevices(ctx echo.Context) error {
+	var request FindDevicesRequestObject
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.FindDevices(ctx.Request().Context(), request.(FindDevicesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "FindDevices")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(FindDevicesResponseObject); ok {
+		return validResponse.VisitFindDevicesResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RegisterDevice operation middleware
+func (sh *strictHandler) RegisterDevice(ctx echo.Context) error {
+	var request RegisterDeviceRequestObject
+
+	var body RegisterDeviceJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RegisterDevice(ctx.Request().Context(), request.(RegisterDeviceRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RegisterDevice")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RegisterDeviceResponseObject); ok {
+		return validResponse.VisitRegisterDeviceResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetDevicesId operation middleware
+func (sh *strictHandler) GetDevicesId(ctx echo.Context, id openapi_types.UUID) error {
+	var request GetDevicesIdRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDevicesId(ctx.Request().Context(), request.(GetDevicesIdRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDevicesId")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDevicesIdResponseObject); ok {
+		return validResponse.VisitGetDevicesIdResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }

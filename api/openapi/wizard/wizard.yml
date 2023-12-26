@@ -10,6 +10,7 @@ paths:
   /devices:
     get:
       description: Returns a list of devices
+      operationId: findDevices
       responses:
         '200':
           description: Successfully returned a list of devices
@@ -29,6 +30,14 @@ paths:
                       $ref: "#/components/schemas/Device"
     post:
       description: Registers a new device
+      operationId: registerDevice
+      requestBody:
+        required: true
+        description: Name, kind and IP addresses of the device to be registered
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/RegisterDeviceRequest"
       responses:
         '200':
           description: Successfully registered a new device and returned it
@@ -72,6 +81,20 @@ paths:
 
 components:
   schemas:
+    RegisterDeviceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        kind:
+          $ref: "#/components/schemas/DeviceKind"
+        ips:
+          type: array
+          items:
+            type: string
+      required:
+        - kind
+        - ips
     ProtectionStatus:
       type: string
       enum:

@@ -24,7 +24,8 @@ func StartAPIServer(app application.Application) {
 	e.Use(echoMiddleware.Recover())
 	//e.Use(middleware.OapiRequestValidator())
 
-	api.RegisterHandlers(e, handler)
+	strictAPIHandler := api.NewStrictHandler(handler, nil)
+	api.RegisterHandlers(e, strictAPIHandler)
 
 	e.Logger.Fatal(e.Start(net.JoinHostPort("0.0.0.0", *port)))
 }
