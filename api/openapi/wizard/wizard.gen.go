@@ -32,13 +32,18 @@ const (
 
 // Device defines model for Device.
 type Device struct {
-	Agent      string             `json:"agent"`
-	Id         openapi_types.UUID `json:"id"`
-	Ips        []string           `json:"ips"`
-	Kind       DeviceKind         `json:"kind"`
-	LastBackup *time.Time         `json:"lastBackup,omitempty"`
-	Name       string             `json:"name"`
-	Protection ProtectionStatus   `json:"protection"`
+	Agent           string             `json:"agent"`
+	Cpu             string             `json:"cpu"`
+	Disks           []string           `json:"disks"`
+	Hostname        string             `json:"hostname"`
+	Id              openapi_types.UUID `json:"id"`
+	Ips             []string           `json:"ips"`
+	Kind            DeviceKind         `json:"kind"`
+	LastBackup      *time.Time         `json:"lastBackup,omitempty"`
+	Name            string             `json:"name"`
+	OperatingSystem string             `json:"operatingSystem"`
+	Protection      ProtectionStatus   `json:"protection"`
+	Ram             string             `json:"ram"`
 }
 
 // DeviceKind defines model for DeviceKind.
@@ -54,6 +59,9 @@ type RegisterDeviceRequest struct {
 	Name *string    `json:"name,omitempty"`
 }
 
+// SSHKey defines model for SSHKey.
+type SSHKey = string
+
 // RegisterDeviceJSONRequestBody defines body for RegisterDevice for application/json ContentType.
 type RegisterDeviceJSONRequestBody = RegisterDeviceRequest
 
@@ -68,6 +76,9 @@ type ServerInterface interface {
 
 	// (GET /devices/{id})
 	GetDevicesId(ctx echo.Context, id openapi_types.UUID) error
+
+	// (GET /ssh-keys)
+	FindSSHKeys(ctx echo.Context) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -109,6 +120,15 @@ func (w *ServerInterfaceWrapper) GetDevicesId(ctx echo.Context) error {
 	return err
 }
 
+// FindSSHKeys converts echo context to params.
+func (w *ServerInterfaceWrapper) FindSSHKeys(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.FindSSHKeys(ctx)
+	return err
+}
+
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -140,6 +160,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/devices", wrapper.FindDevices)
 	router.POST(baseURL+"/devices", wrapper.RegisterDevice)
 	router.GET(baseURL+"/devices/:id", wrapper.GetDevicesId)
+	router.GET(baseURL+"/ssh-keys", wrapper.FindSSHKeys)
 
 }
 
@@ -202,6 +223,25 @@ func (response GetDevicesId200JSONResponse) VisitGetDevicesIdResponse(w http.Res
 	return json.NewEncoder(w).Encode(response)
 }
 
+type FindSSHKeysRequestObject struct {
+}
+
+type FindSSHKeysResponseObject interface {
+	VisitFindSSHKeysResponse(w http.ResponseWriter) error
+}
+
+type FindSSHKeys200JSONResponse struct {
+	Data    []SSHKey `json:"data"`
+	Success bool     `json:"success"`
+}
+
+func (response FindSSHKeys200JSONResponse) VisitFindSSHKeysResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 
@@ -213,6 +253,9 @@ type StrictServerInterface interface {
 
 	// (GET /devices/{id})
 	GetDevicesId(ctx context.Context, request GetDevicesIdRequestObject) (GetDevicesIdResponseObject, error)
+
+	// (GET /ssh-keys)
+	FindSSHKeys(ctx context.Context, request FindSSHKeysRequestObject) (FindSSHKeysResponseObject, error)
 }
 
 type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
@@ -298,6 +341,29 @@ func (sh *strictHandler) GetDevicesId(ctx echo.Context, id openapi_types.UUID) e
 		return err
 	} else if validResponse, ok := response.(GetDevicesIdResponseObject); ok {
 		return validResponse.VisitGetDevicesIdResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// FindSSHKeys operation middleware
+func (sh *strictHandler) FindSSHKeys(ctx echo.Context) error {
+	var request FindSSHKeysRequestObject
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.FindSSHKeys(ctx.Request().Context(), request.(FindSSHKeysRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "FindSSHKeys")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(FindSSHKeysResponseObject); ok {
+		return validResponse.VisitFindSSHKeysResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}

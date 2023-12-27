@@ -16,11 +16,16 @@ import { ProtectionStatus } from './protectionStatus';
 export interface Device { 
     id: string;
     name: string;
+    hostname: string;
     kind: DeviceKind;
     protection: ProtectionStatus;
     lastBackup?: string;
     ips: Array<string>;
     agent: string;
+    operatingSystem: string;
+    cpu: string;
+    ram: string;
+    disks: Array<string>;
 }
 export namespace Device {
 }

@@ -1,7 +1,11 @@
 package ssh
 
 import (
+	"crypto/rand"
+	"encoding/pem"
+	"github.com/mikesmitty/edkey"
 	"golang.org/x/crypto/ed25519"
+	"golang.org/x/crypto/ssh"
 	"os"
 	"path"
 )
@@ -17,16 +21,29 @@ func CreateSSHKeyPairIfNotExists(dir string) error {
 
 // CreateSSHKeyPair creates a new ed25519 key pair inside dir
 func CreateSSHKeyPair(dir string) error {
-	privateKey, publicKey, err := ed25519.GenerateKey(nil)
+	pubKey, privateKey, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(path.Join(dir, "id_ed25519"), privateKey, 0600); err != nil {
+	publicKey, err := ssh.NewPublicKey(pubKey)
+	if err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(path.Join(dir, "id_ed25519.pub"), publicKey, 0600); err != nil {
+	privateKeyBytes := edkey.MarshalED25519PrivateKey(privateKey)
+	privateKeyPem := &pem.Block{
+		Type:  "OPENSSH PRIVATE KEY",
+		Bytes: privateKeyBytes,
+	}
+
+	if err := os.WriteFile(path.Join(dir, "id_ed25519"), pem.EncodeToMemory(privateKeyPem), 0600); err != nil {
+		return err
+	}
+
+	authorizedKey := ssh.MarshalAuthorizedKey(publicKey)
+
+	if err := os.WriteFile(path.Join(dir, "id_ed25519.pub"), authorizedKey, 0644); err != nil {
 		return err
 	}
 

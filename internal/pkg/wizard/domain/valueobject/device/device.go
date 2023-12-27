@@ -1,10 +1,11 @@
 package device
 
-import "bwizard/internal/pkg/inspect"
+import (
+	"bwizard/internal/pkg/inspect"
+)
 
 type ProtectionStatus string
 type Kind string
-type IPAddress string
 
 const (
 	ProtectionStatusOk      ProtectionStatus = "ok"
@@ -16,24 +17,23 @@ const (
 	KindMobile   Kind = "mobile"
 )
 
-type OperatingSystem struct {
-	Name           string `db:"name"`
-	CPU            string `db:"cpu"`
-	Ram            string `db:"ram"`
-	TotalHardDrive string `db:"ram"`
-}
-
 type Inspection struct {
-	Hostname string `db:"hostname"`
-	CPU      string `db:"cpu"`
-	Ram      string `db:"ram"`
+	Hostname        string
+	CPU             string
+	Ram             string
+	Disks           []string
+	OperatingSystem string
+	Agent           string
 }
 
 // NewInspectionFromDeviceInspection returns a new domain inspection from inspect.DeviceInspection
 func NewInspectionFromDeviceInspection(inspection *inspect.DeviceInspection) *Inspection {
 	return &Inspection{
-		Hostname: inspection.Hostname,
-		CPU:      inspection.CPU,
-		Ram:      inspection.Ram,
+		Hostname:        inspection.Hostname,
+		CPU:             inspection.CPU,
+		Ram:             inspection.Ram,
+		Disks:           inspection.Disks,
+		Agent:           inspection.Agent,
+		OperatingSystem: inspection.OperatingSystem,
 	}
 }

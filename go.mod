@@ -4,9 +4,12 @@ go 1.21
 
 require (
 	github.com/doug-martin/goqu/v9 v9.19.0
-	github.com/go-sql-driver/mysql v1.6.0
+	github.com/gofrs/uuid/v5 v5.0.0
 	github.com/google/uuid v1.4.0
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/labstack/echo/v4 v4.11.4
+	github.com/lib/pq v1.10.1
+	github.com/mikesmitty/edkey v0.0.0-20170222072505-3356ea4e686a
 	github.com/oapi-codegen/runtime v1.1.0
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4

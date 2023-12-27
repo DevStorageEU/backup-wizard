@@ -1,25 +1,25 @@
 package mysql
 
 import (
-	"database/sql"
-	"github.com/go-sql-driver/mysql"
+	"fmt"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
 	"os"
 )
 
-func Connect(logger *zerolog.Logger) (*sql.DB, error) {
+func Connect(logger *zerolog.Logger) (*sqlx.DB, error) {
 	logger.Info().Msg("try to connect to database...")
 
-	cfg := mysql.Config{
-		User:                 os.Getenv("DB_USER"),
-		Passwd:               os.Getenv("DB_PASS"),
-		Net:                  "tcp",
-		Addr:                 os.Getenv("DB_HOST"),
-		DBName:               os.Getenv("DB_DATABASE"),
-		AllowNativePasswords: true,
-	}
+	dsn := fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASS"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_DATABASE"))
 
-	db, err := sql.Open("mysql", cfg.FormatDSN())
+	logger.Debug().Msgf("dsn: %s", dsn)
+
+	db, err := sqlx.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}

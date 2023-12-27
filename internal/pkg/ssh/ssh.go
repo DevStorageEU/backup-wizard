@@ -68,7 +68,20 @@ func (c *Client) Close() error {
 	return c.client.Close()
 }
 
-// NewSession returns a new session to run commands in
+// NewSession returns a new session to run command in
 func (c *Client) NewSession() (*ssh.Session, error) {
 	return c.client.NewSession()
+}
+
+func (c *Client) RunCommand(cmd string) ([]byte, error) {
+	session, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+
+	defer func(session *ssh.Session) {
+		_ = session.Close()
+	}(session)
+
+	return session.CombinedOutput(cmd)
 }

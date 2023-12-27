@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 api.module.ts
 api/api.ts
@@ -11,8 +10,8 @@ index.ts
 model/device.ts
 model/deviceKind.ts
 model/findDevices200Response.ts
+model/findSSHKeys200Response.ts
 model/models.ts
-model/operatingSystem.ts
 model/protectionStatus.ts
 model/registerDevice200Response.ts
 model/registerDeviceRequest.ts

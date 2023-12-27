@@ -5,34 +5,50 @@ import (
 	"bwizard/internal/pkg/ssh"
 	deviceSvc "bwizard/internal/pkg/wizard/domain/svc/device"
 	deviceValue "bwizard/internal/pkg/wizard/domain/valueobject/device"
+	"github.com/rs/zerolog"
+)
+
+const (
+	privateKeyPath = "/var/lib/bwizard/id_ed25519"
 )
 
 type InspectionSvcImpl struct {
+	logger *zerolog.Logger
 }
 
 var _ deviceSvc.InspectionService = &InspectionSvcImpl{}
 
-func NewInspectionSvc() *InspectionSvcImpl {
-	return &InspectionSvcImpl{}
+func NewInspectionSvc(logger *zerolog.Logger) *InspectionSvcImpl {
+	return &InspectionSvcImpl{
+		logger: logger,
+	}
 }
 
 // Inspect gains information from a backup device such like the operating system or the agent
-func (i *InspectionSvcImpl) Inspect(ips []deviceValue.IPAddress) (*deviceValue.Inspection, error) {
+func (i *InspectionSvcImpl) Inspect(ips []string) (*deviceValue.Inspection, error) {
 	credentials := ssh.Credentials{
-		Username: "root",
+		Username:       "root",
+		PrivateKeyPath: privateKeyPath,
 	}
+
+	i.logger.Debug().Msgf("try %d hosts", len(ips))
 
 	var clients []*ssh.Client
 	for _, ip := range ips {
 
-		client, err := ssh.NewClient(string(ip), 22, &credentials)
+		i.logger.Debug().Msgf("try host %s", ip)
+
+		client, err := ssh.NewClient(ip, 22, &credentials)
 		if err != nil {
 			return nil, err
 		}
 
-		if err := client.Connect(); err != nil {
+		if connectErr := client.Connect(); connectErr != nil {
+			i.logger.Debug().Msgf("skip connection to %s due to error: %s", ip, connectErr.Error())
 			continue
 		}
+
+		i.logger.Debug().Msgf("successfully connected to %s", ip)
 
 		clients = append(clients, client)
 

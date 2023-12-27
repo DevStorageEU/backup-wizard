@@ -1,8 +1,8 @@
 version: '3'
 
 env:
-  GOOSE_DRIVER: mysql
-  GOOSE_DBSTRING: "root:bwizard@/bwizard"
+  GOOSE_DRIVER: postgres
+  GOOSE_DBSTRING: "postgresql://bwizard:bwizard@127.0.0.1:5432"
 
 tasks:
   setup:
@@ -14,6 +14,8 @@ tasks:
     cmd: goose -dir ./migrations create {{.CLI_ARGS}} sql
   migrations-migrate:
     cmd: goose -dir ./migrations up
+  migrations-down:
+    cmd: goose -dir ./migrations down
   gen-http:
     cmds:
       - oapi-codegen -package wizard -generate types,server,strict-server ./api/openapi/wizard/wizard.yml > ./api/openapi/wizard/wizard.gen.go

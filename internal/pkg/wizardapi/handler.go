@@ -7,20 +7,46 @@ import (
 	deviceValue "bwizard/internal/pkg/wizard/domain/valueobject/device"
 	"bwizard/internal/pkg/wizardapi/mappings"
 	"context"
+	"github.com/rs/zerolog"
+	"os"
 )
 
 type Handler struct {
+	logger           *zerolog.Logger
 	app              application.Application
 	deviceRepository deviceRepo.Repository
 }
 
 var _ wizard.StrictServerInterface = &Handler{}
 
-func NewHandler(app application.Application, deviceRepository deviceRepo.Repository) *Handler {
+func NewHandler(logger *zerolog.Logger, app application.Application, deviceRepository deviceRepo.Repository) *Handler {
 	return &Handler{
+		logger:           logger,
 		app:              app,
 		deviceRepository: deviceRepository,
 	}
+}
+
+func (h *Handler) FindSSHKeys(ctx context.Context, request wizard.FindSSHKeysRequestObject) (wizard.FindSSHKeysResponseObject, error) {
+	// TODO: Replace with some kind of ssh keys repository
+
+	sshKey, err := os.ReadFile("/var/lib/bwizard/id_ed25519.pub")
+	if os.IsNotExist(err) {
+		return wizard.FindSSHKeys200JSONResponse{
+			Success: true,
+			Data:    make([]wizard.SSHKey, 0),
+		}, nil
+	}
+
+	if err != nil {
+		// TODO: Add error handling here
+		return nil, err
+	}
+
+	return wizard.FindSSHKeys200JSONResponse{
+		Success: true,
+		Data:    []wizard.SSHKey{string(sshKey)},
+	}, nil
 }
 
 func (h *Handler) FindDevices(ctx context.Context, request wizard.FindDevicesRequestObject) (wizard.FindDevicesResponseObject, error) {
@@ -30,7 +56,13 @@ func (h *Handler) FindDevices(ctx context.Context, request wizard.FindDevicesReq
 		return nil, err
 	}
 
-	mappedDevices := mappings.MapDevices(devices)
+	mappedDevices, err := mappings.MapDevices(devices)
+	if err != nil {
+		h.logger.Error().Msgf("%s", err.Error())
+
+		// TODO: Add error handling here
+		return nil, err
+	}
 
 	return wizard.FindDevices200JSONResponse{
 		Success: true,
@@ -39,18 +71,21 @@ func (h *Handler) FindDevices(ctx context.Context, request wizard.FindDevicesReq
 }
 
 func (h *Handler) RegisterDevice(ctx context.Context, request wizard.RegisterDeviceRequestObject) (wizard.RegisterDeviceResponseObject, error) {
-	ips := make([]deviceValue.IPAddress, 0)
-	for _, ip := range ips {
-		ips = append(ips, ip)
-	}
-
-	device, err := h.app.SetupDevice(ips, deviceValue.Kind(request.Body.Kind), request.Body.Name)
+	device, err := h.app.SetupDevice(ctx, request.Body.Ips, deviceValue.Kind(request.Body.Kind), request.Body.Name)
 	if err != nil {
+		h.logger.Error().Msgf("%s", err.Error())
+
 		// TODO: Add error handling here
 		return nil, err
 	}
 
-	mappedDevice := mappings.MapDevice(device)
+	mappedDevice, err := mappings.MapDevice(device)
+	if err != nil {
+		h.logger.Error().Msgf("%s", err.Error())
+
+		// TODO: Add error handling here
+		return nil, err
+	}
 
 	return wizard.RegisterDevice200JSONResponse{
 		Success: true,

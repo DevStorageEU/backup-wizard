@@ -5,5 +5,5 @@ import (
 )
 
 type InspectionService interface {
-	Inspect(ips []device.IPAddress) (*device.Inspection, error)
+	Inspect(ips []string) (*device.Inspection, error)
 }

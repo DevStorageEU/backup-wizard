@@ -1,29 +1,49 @@
 version: '3.9'
 
 volumes:
+  pg_data:
   db_data:
+  var_lib_data:
 
 networks:
   bwizard:
 
 services:
   db:
-    image: mariadb
+    image: postgres
+    restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: bwizard
-      MARIADB_DATABASE: bwizard
-      MARIADB_USER: bwizard
-      MARIADB_PASSWORD: bwizard
+      POSTGRES_PASSWORD: bwizard
+      POSTGRES_USER: bwizard
+      POSTGRES_DB: bwizard
     healthcheck:
-      test: [ "CMD", "mariadb-admin" ,"ping", "-u", "root", "-pbwizard", "-h", "localhost" ]
-      timeout: 20s
-      retries: 10
+      test: [ "CMD-SHELL", "pg_isready _u bwizard" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
-      - 3306:3306
+      - 5432:5432
     volumes:
-      - db_data:/var/lib/mysql
+      - pg_data:/var/lib/postgresql/data
     networks:
       - bwizard
+#  db:
+#    image: mariadb
+#    environment:
+#      MARIADB_ROOT_PASSWORD: bwizard
+#      MARIADB_DATABASE: bwizard
+#      MARIADB_USER: bwizard
+#      MARIADB_PASSWORD: bwizard
+#    healthcheck:
+#      test: [ "CMD", "mariadb-admin" ,"ping", "-u", "root", "-pbwizard", "-h", "localhost" ]
+#      timeout: 20s
+#      retries: 10
+#    ports:
+#      - 3306:3306
+#    volumes:
+#      - db_data:/var/lib/mysql
+#    networks:
+#      - bwizard
   wizard:
     depends_on:
       db:
@@ -42,6 +62,7 @@ services:
       - 8099:8099
     # Important to bind/mount your codebase dir to /app dir for live reload
     volumes:
+      - var_lib_data:/var/lib/bwizard
       - ./:/app
     networks:
       - bwizard

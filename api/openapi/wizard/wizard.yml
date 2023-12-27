@@ -6,7 +6,33 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: '{server}/v1'
+    variables:
+      server:
+        default: http://localhost:8099
 paths:
+  /ssh-keys:
+    get:
+      description: Returns a list of public keys to authorize with servers to be backed up
+      operationId: findSSHKeys
+      responses:
+        '200':
+          description: Successfully returned a list of ssh keys
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - data
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SSHKey"
   /devices:
     get:
       description: Returns a list of devices
@@ -107,36 +133,29 @@ components:
         - server
         - computer
         - mobile
-    OperatingSystem:
-      type: object
-      required:
-        - name
-        - cpu
-        - ram
-        - totalHardDrive
-      properties:
-        name:
-          type: string
-        cpu:
-          type: string
-        ram:
-          type: string
-        totalHardDrive:
-          type: string
+    SSHKey:
+      type: string
     Device:
       type: object
       required:
         - id
         - name
+        - hostname
         - kind
         - protection
+        - cpu
+        - ram
+        - disks
         - ips
         - agent
+        - operatingSystem
       properties:
         id:
           type: string
           format: uuid
         name:
+          type: string
+        hostname:
           type: string
         kind:
           $ref: "#/components/schemas/DeviceKind"
@@ -151,3 +170,13 @@ components:
             type: string
         agent:
           type: string
+        operatingSystem:
+          type: string
+        cpu:
+          type: string
+        ram:
+          type: string
+        disks:
+          type: array
+          items:
+            type: string

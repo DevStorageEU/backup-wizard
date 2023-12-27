@@ -1,15 +1,20 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE devices (
-    id VARCHAR(36) PRIMARY KEY NOT NULL DEFAULT UUID(),
+    id uuid PRIMARY KEY NOT NULL,
     name VARCHAR(128) NOT NULL,
+    hostname VARCHAR(128) NOT NULL,
     kind VARCHAR(16) NOT NULL,
     protection VARCHAR(16) NOT NULL,
-    last_backup DATETIME,
-    ips VARCHAR(1024) NOT NULL,
+    last_backup TIMESTAMP,
+    cpu VARCHAR(128) NOT NULL,
+    ram VARCHAR(16) NOT NULL,
+    disks VARCHAR(32)[] NOT NULL,
+    ips VARCHAR(64)[] NOT NULL,
     agent VARCHAR(128) NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT NOW(),
-    updated_at DATETIME NOT NULL DEFAULT NOW()
+    operating_system VARCHAR(128) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 -- +goose StatementEnd
 

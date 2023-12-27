@@ -7,6 +7,7 @@ import (
 	"flag"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
+	"github.com/rs/zerolog"
 	"net"
 )
 
@@ -14,19 +15,21 @@ const (
 	DefaultPort = "8099"
 )
 
-func StartAPIServer(app application.Application, deviceRepository deviceRepo.Repository) {
+func StartAPIServer(logger *zerolog.Logger, app application.Application, deviceRepository deviceRepo.Repository) {
 	port := flag.String("port", DefaultPort, "Default port to start the api and ui on")
 	flag.Parse()
 
-	handler := NewHandler(app, deviceRepository)
+	handler := NewHandler(logger, app, deviceRepository)
 
 	e := echo.New()
 	e.Use(echoMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
 	//e.Use(middleware.OapiRequestValidator())
 
+	g := e.Group("/v1")
+
 	strictAPIHandler := api.NewStrictHandler(handler, nil)
-	api.RegisterHandlers(e, strictAPIHandler)
+	api.RegisterHandlers(g, strictAPIHandler)
 
 	e.Logger.Fatal(e.Start(net.JoinHostPort("0.0.0.0", *port)))
 }

@@ -41,7 +41,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	app := application.NewApplication(db)
+	app := application.NewApplication(&logger, db)
 
-	wizardapi.StartAPIServer(app, app.DeviceRepo)
+	wizardapi.StartAPIServer(&logger, app, app.DeviceRepo)
 }
