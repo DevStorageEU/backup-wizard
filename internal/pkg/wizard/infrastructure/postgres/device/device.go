@@ -1,28 +1,27 @@
 package device
 
 import (
-	"bwizard/internal/pkg/wizard/domain/entity/device"
-	deviceValue "bwizard/internal/pkg/wizard/domain/valueobject/device"
+	"bwizard/internal/pkg/wizard/domain/device"
 	"github.com/gofrs/uuid/v5"
 	"github.com/lib/pq"
 	"time"
 )
 
 type Device struct {
-	ID              uuid.UUID                    `db:"id"`
-	Name            string                       `db:"name"`
-	Hostname        string                       `db:"hostname"`
-	Kind            deviceValue.Kind             `db:"kind"`
-	Protection      deviceValue.ProtectionStatus `db:"protection"`
-	LastBackup      *time.Time                   `db:"last_backup" goqu:"omitempty"`
-	CPU             string                       `db:"cpu"`
-	Ram             string                       `db:"ram"`
-	Disks           pq.StringArray               `db:"disks"`
-	IPs             pq.StringArray               `db:"ips"`
-	OperatingSystem string                       `db:"operating_system"`
-	Agent           string                       `db:"agent"`
-	CreatedAt       time.Time                    `db:"created_at" goqu:"skipinsert,skipupdate"`
-	UpdatedAt       time.Time                    `db:"updated_at" goqu:"skipinsert"`
+	ID              uuid.UUID               `db:"id"`
+	Name            string                  `db:"name"`
+	Hostname        string                  `db:"hostname"`
+	Kind            device.Kind             `db:"kind"`
+	Protection      device.ProtectionStatus `db:"protection"`
+	LastBackup      *time.Time              `db:"last_backup" goqu:"omitempty"`
+	CPU             string                  `db:"cpu"`
+	Ram             string                  `db:"ram"`
+	Disks           pq.StringArray          `db:"disks"`
+	IPs             pq.StringArray          `db:"ips"`
+	OperatingSystem string                  `db:"operating_system"`
+	Agent           string                  `db:"agent"`
+	CreatedAt       time.Time               `db:"created_at" goqu:"skipinsert,skipupdate"`
+	UpdatedAt       time.Time               `db:"updated_at" goqu:"skipinsert"`
 }
 
 func MapModel(deviceEntity *Device) *device.Device {

@@ -3,8 +3,7 @@ package wizardapi
 import (
 	"bwizard/api/openapi/wizard"
 	"bwizard/internal/pkg/wizard/application"
-	deviceRepo "bwizard/internal/pkg/wizard/domain/repo/device"
-	deviceValue "bwizard/internal/pkg/wizard/domain/valueobject/device"
+	deviceRepo "bwizard/internal/pkg/wizard/domain/device"
 	"bwizard/internal/pkg/wizardapi/mappings"
 	"context"
 	"github.com/rs/zerolog"
@@ -71,7 +70,7 @@ func (h *Handler) FindDevices(ctx context.Context, request wizard.FindDevicesReq
 }
 
 func (h *Handler) RegisterDevice(ctx context.Context, request wizard.RegisterDeviceRequestObject) (wizard.RegisterDeviceResponseObject, error) {
-	device, err := h.app.SetupDevice(ctx, request.Body.Ips, deviceValue.Kind(request.Body.Kind), request.Body.Name)
+	device, err := h.app.SetupDevice(ctx, request.Body.Ips, deviceRepo.Kind(request.Body.Kind), request.Body.Name)
 	if err != nil {
 		h.logger.Error().Msgf("%s", err.Error())
 

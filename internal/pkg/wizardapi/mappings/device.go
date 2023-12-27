@@ -2,7 +2,7 @@ package mappings
 
 import (
 	"bwizard/api/openapi/wizard"
-	"bwizard/internal/pkg/wizard/domain/entity/device"
+	"bwizard/internal/pkg/wizard/domain/device"
 	"github.com/google/uuid"
 )
 

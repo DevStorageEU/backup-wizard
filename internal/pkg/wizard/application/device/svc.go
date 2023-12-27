@@ -3,8 +3,7 @@ package device
 import (
 	"bwizard/internal/pkg/inspect"
 	"bwizard/internal/pkg/ssh"
-	deviceSvc "bwizard/internal/pkg/wizard/domain/svc/device"
-	deviceValue "bwizard/internal/pkg/wizard/domain/valueobject/device"
+	"bwizard/internal/pkg/wizard/domain/device"
 	"github.com/rs/zerolog"
 )
 
@@ -16,7 +15,7 @@ type InspectionSvcImpl struct {
 	logger *zerolog.Logger
 }
 
-var _ deviceSvc.InspectionService = &InspectionSvcImpl{}
+var _ device.InspectionService = &InspectionSvcImpl{}
 
 func NewInspectionSvc(logger *zerolog.Logger) *InspectionSvcImpl {
 	return &InspectionSvcImpl{
@@ -25,7 +24,7 @@ func NewInspectionSvc(logger *zerolog.Logger) *InspectionSvcImpl {
 }
 
 // Inspect gains information from a backup device such like the operating system or the agent
-func (i *InspectionSvcImpl) Inspect(ips []string) (*deviceValue.Inspection, error) {
+func (i *InspectionSvcImpl) Inspect(ips []string) (*device.Inspection, error) {
 	credentials := ssh.Credentials{
 		Username:       "root",
 		PrivateKeyPath: privateKeyPath,
@@ -57,7 +56,7 @@ func (i *InspectionSvcImpl) Inspect(ips []string) (*deviceValue.Inspection, erro
 			return nil, err
 		}
 
-		return deviceValue.NewInspectionFromDeviceInspection(inspection), nil
+		return device.NewInspectionFromDeviceInspection(inspection), nil
 	}
 
 	defer func(clients []*ssh.Client) {

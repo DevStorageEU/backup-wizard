@@ -1,7 +1,6 @@
 package device
 
 import (
-	"bwizard/internal/pkg/wizard/domain/valueobject/device"
 	"github.com/gofrs/uuid/v5"
 	"time"
 )
@@ -34,13 +33,13 @@ func (b *Builder) Hostname(v string) *Builder {
 	return b
 }
 
-func (b *Builder) Kind(v device.Kind) *Builder {
+func (b *Builder) Kind(v Kind) *Builder {
 	b.Device.Kind = v
 
 	return b
 }
 
-func (b *Builder) Protection(v device.ProtectionStatus) *Builder {
+func (b *Builder) Protection(v ProtectionStatus) *Builder {
 	b.Device.Protection = v
 
 	return b

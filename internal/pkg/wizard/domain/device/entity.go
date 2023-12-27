@@ -1,7 +1,6 @@
 package device
 
 import (
-	"bwizard/internal/pkg/wizard/domain/valueobject/device"
 	"github.com/gofrs/uuid/v5"
 	"time"
 )
@@ -10,8 +9,8 @@ type Device struct {
 	ID              uuid.UUID
 	Name            string
 	Hostname        string
-	Kind            device.Kind
-	Protection      device.ProtectionStatus
+	Kind            Kind
+	Protection      ProtectionStatus
 	LastBackup      *time.Time
 	CPU             string
 	Ram             string

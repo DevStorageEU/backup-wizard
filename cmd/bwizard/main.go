@@ -3,7 +3,7 @@ package main
 import (
 	"bwizard/internal/pkg/ssh"
 	"bwizard/internal/pkg/wizard/application"
-	"bwizard/internal/pkg/wizard/infrastructure/mysql"
+	"bwizard/internal/pkg/wizard/infrastructure/postgres"
 	"bwizard/internal/pkg/wizardapi"
 	"github.com/rs/zerolog"
 	"os"
@@ -35,7 +35,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	db, err := mysql.Connect(&logger)
+	db, err := postgres.Connect(&logger)
 	if err != nil {
 		logger.Error().Msg(err.Error())
 		os.Exit(1)

@@ -1,12 +1,9 @@
 package application
 
 import (
-	deviceSvcImpl "bwizard/internal/pkg/wizard/application/svc/device"
-	"bwizard/internal/pkg/wizard/domain/entity/device"
-	deviceRepo "bwizard/internal/pkg/wizard/domain/repo/device"
-	deviceSvc "bwizard/internal/pkg/wizard/domain/svc/device"
-	deviceValue "bwizard/internal/pkg/wizard/domain/valueobject/device"
-	deviceRepoImpl "bwizard/internal/pkg/wizard/infrastructure/mysql/repo/device"
+	deviceSvc "bwizard/internal/pkg/wizard/application/device"
+	"bwizard/internal/pkg/wizard/domain/device"
+	deviceRepo "bwizard/internal/pkg/wizard/infrastructure/postgres/device"
 	"context"
 	"errors"
 	_ "github.com/doug-martin/goqu/v9/dialect/mysql"
@@ -16,21 +13,21 @@ import (
 
 type Application interface {
 	// SetupDevice setups a new device
-	SetupDevice(ctx context.Context, ips []string, kind deviceValue.Kind, name *string) (*device.Device, error)
+	SetupDevice(ctx context.Context, ips []string, kind device.Kind, name *string) (*device.Device, error)
 }
 
 type Impl struct {
 	logger              *zerolog.Logger
-	DeviceRepo          deviceRepo.Repository
-	DeviceInspectionSvc deviceSvc.InspectionService
+	DeviceRepo          device.Repository
+	DeviceInspectionSvc device.InspectionService
 }
 
 var _ Application = &Impl{}
 
 // NewApplication returns a new application
 func NewApplication(logger *zerolog.Logger, db *sqlx.DB) *Impl {
-	deviceRepository := deviceRepoImpl.NewRepository(logger, db)
-	deviceInspectionSvc := deviceSvcImpl.NewInspectionSvc(logger)
+	deviceRepository := deviceRepo.NewRepository(logger, db)
+	deviceInspectionSvc := deviceSvc.NewInspectionSvc(logger)
 
 	return &Impl{
 		logger:              logger,
@@ -40,7 +37,7 @@ func NewApplication(logger *zerolog.Logger, db *sqlx.DB) *Impl {
 }
 
 // SetupDevice setups a new device
-func (i *Impl) SetupDevice(ctx context.Context, ips []string, kind deviceValue.Kind, name *string) (*device.Device, error) {
+func (i *Impl) SetupDevice(ctx context.Context, ips []string, kind device.Kind, name *string) (*device.Device, error) {
 	inspection, err := i.DeviceInspectionSvc.Inspect(ips)
 	if err != nil {
 		return nil, err
@@ -61,7 +58,7 @@ func (i *Impl) SetupDevice(ctx context.Context, ips []string, kind deviceValue.K
 		Name(*name).
 		Hostname(inspection.Hostname).
 		Kind(kind).
-		Protection(deviceValue.ProtectionStatusOk).
+		Protection(device.ProtectionStatusOk).
 		CPU(inspection.CPU).
 		Ram(inspection.Ram).
 		Disks(inspection.Disks).

@@ -1,9 +1,7 @@
 package device
 
 import (
-	"bwizard/internal/pkg/wizard/domain/entity/device"
-	device2 "bwizard/internal/pkg/wizard/domain/repo/device"
-	deviceModel "bwizard/internal/pkg/wizard/infrastructure/mysql/model/device"
+	"bwizard/internal/pkg/wizard/domain/device"
 	"context"
 	"database/sql"
 	"errors"
@@ -24,7 +22,7 @@ type Impl struct {
 	db     *sqlx.DB
 }
 
-var _ device2.Repository = &Impl{}
+var _ device.Repository = &Impl{}
 
 // NewRepository returns a new mysql device repository
 func NewRepository(logger *zerolog.Logger, db *sqlx.DB) *Impl {
@@ -65,7 +63,7 @@ func (i *Impl) GetDevices(ctx context.Context) ([]*device.Device, error) {
 	query, _, err := goqu.
 		Dialect(Dialect).
 		From(TableName).
-		Select(&deviceModel.Device{}).
+		Select(&Device{}).
 		ToSQL()
 
 	if err != nil {
@@ -84,12 +82,12 @@ func (i *Impl) GetDevices(ctx context.Context) ([]*device.Device, error) {
 	devices := make([]*device.Device, 0)
 
 	for rows.Next() {
-		var model deviceModel.Device
+		var model Device
 		if scanErr := rows.StructScan(&model); scanErr != nil {
 			return nil, scanErr
 		}
 
-		deviceEntity := deviceModel.MapModel(&model)
+		deviceEntity := MapModel(&model)
 		devices = append(devices, deviceEntity)
 	}
 
@@ -100,7 +98,7 @@ func (i *Impl) GetDevices(ctx context.Context) ([]*device.Device, error) {
 func (i *Impl) SaveDevice(ctx context.Context, device *device.Device) error {
 	i.logger.Debug().Msgf("try to save device %s", device.ID.String())
 
-	model := deviceModel.MapDevice(device)
+	model := MapDevice(device)
 
 	insertSQL, _, _ := goqu.
 		Dialect(Dialect).

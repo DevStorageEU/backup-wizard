@@ -3,7 +3,7 @@ package wizardapi
 import (
 	api "bwizard/api/openapi/wizard"
 	"bwizard/internal/pkg/wizard/application"
-	deviceRepo "bwizard/internal/pkg/wizard/domain/repo/device"
+	deviceRepo "bwizard/internal/pkg/wizard/domain/device"
 	"flag"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
