@@ -12,8 +12,13 @@ model/deviceKind.ts
 model/findDevices200Response.ts
 model/findSSHKeys200Response.ts
 model/models.ts
+model/policy.ts
 model/protectionStatus.ts
 model/registerDevice200Response.ts
 model/registerDeviceRequest.ts
+model/retention.ts
+model/retentionKind.ts
+model/schedule.ts
+model/weekday.ts
 param.ts
 variables.ts

@@ -180,3 +180,64 @@ components:
           type: array
           items:
             type: string
+    RetentionKind:
+      type: string
+      enum:
+        - hourly
+        - daily
+        - weekly
+        - monthly
+    Weekday:
+      type: string
+      enum:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
+    Retention:
+      type: object
+      required:
+        - kind
+        - amount
+      properties:
+        kind:
+          $ref: "#/components/schemas/RetentionKind"
+        amount:
+          type: number
+          description: The amount of backups to keep
+          minimum: 0
+    Schedule:
+      type: object
+      required:
+        - kind
+        - weekday
+        - time
+      properties:
+        kind:
+          $ref: "#/components/schemas/RetentionKind"
+        weekday:
+          $ref: "#/components/schemas/Weekday"
+        time:
+          type: string
+          format: time
+    Policy:
+      type: object
+      required:
+        - id
+        - retentions
+        - schedules
+      properties:
+        id:
+          type: string
+          format: uuid
+        retentions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Retention"
+        schedules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Schedule"
